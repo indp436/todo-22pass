@@ -1,4 +1,4 @@
-GET http://localhost:3000/todos/?status=DONE
+GET http://localhost:3000/todos/?status=TO%20DO
 ###
 
 GET http://localhost:3000/todos/1/
@@ -8,6 +8,16 @@ GET http://localhost:3000/todos/1/
 GET http://localhost:3000/agenda/?date=2021-12-31
 ###
 POST http://localhost:3000/todos/
+Content-Type: application/json
+
+{
+  "id": 6,
+  "todo": "Finalize event theme",
+  "priority": "LOW",
+  "status": "TO",
+  "category": "HOME",
+  "dueDate": "2021-02-22"
+}
 
 ###
 PUT http://localhost:3000/todos/1/

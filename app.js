@@ -34,7 +34,7 @@ initializeDbAndServer();
 const priorityArray = ["HIGH", "MEDIUM", "LOW"];
 const statusArray = ["TO DO", "IN PROGRESS", "DONE"];
 const categoryArray = ["WORK", "HOME", "LEARNING"];
-
+///QueryParametersChecking
 var hasPriorityAndStatusProperties = (requestQuery) => {
   return (
     requestQuery.priority !== undefined && requestQuery.status !== undefined
@@ -66,13 +66,13 @@ var hasCategoryProperty = (requestQuery) => {
 };
 
 ///API 1
-
 app.get("/todos/", async (request, response) => {
   let data = null;
   let getTodosQuery = "";
   const { search_q = "", category, priority, status } = request.query;
 
   switch (true) {
+    ///API1 SENARIO 3
     case hasPriorityAndStatusProperties(request.query):
       if (priorityArray.includes(priority) && statusArray.includes(status)) {
         getTodosQuery = `
@@ -98,7 +98,7 @@ app.get("/todos/", async (request, response) => {
         }
       }
       break;
-
+    ///API 1 SENARIO 5
     case hasCategoryAndStatusProperties(request.query):
       if (categoryArray.includes(category) && statusArray.includes(status)) {
         getTodosQuery = `
@@ -116,16 +116,15 @@ app.get("/todos/", async (request, response) => {
         if (categoryArray.includes(category)) {
           response.status(400);
           response.send("Invalid Todo Status");
-          break;
         } else {
           if (statusArray.includes(status)) {
             response.status(400);
             response.send("Invalid Todo Category");
-            break;
           }
         }
       }
-
+      break;
+    ///API API 1 SENARIO 7
     case hasCategoryAndPriorityProperties(request.query):
       if (
         priorityArray.includes(priority) &&
@@ -142,21 +141,19 @@ app.get("/todos/", async (request, response) => {
         AND priority = '${priority}';`;
         data = await database.all(getTodosQuery);
         response.send(data);
-        break;
       } else {
         if (priorityArray.includes(priority)) {
           response.status(400);
           response.send("Invalid Todo category");
-          break;
         } else {
           if (categoryArray.includes(category)) {
             response.status(400);
             response.send("Invalid Todo Priority");
-            break;
           }
         }
       }
-
+      break;
+    ///API1 SENARIO 2
     case hasPriorityProperty(request.query):
       if (priorityArray.includes(priority)) {
         getTodosQuery = `
@@ -169,13 +166,12 @@ app.get("/todos/", async (request, response) => {
         AND priority = '${priority}';`;
         data = await database.all(getTodosQuery);
         response.send(data);
-        break;
       } else {
         response.status(400);
         response.send("Invalid Todo Priority");
-        break;
       }
-
+      break;
+    ///API1 SENARIO 1
     case hasStatusProperty(request.query):
       if (statusArray.includes(status)) {
         getTodosQuery = `
@@ -188,13 +184,12 @@ app.get("/todos/", async (request, response) => {
         AND status = '${status}';`;
         data = await database.all(getTodosQuery);
         response.send(data);
-        break;
       } else {
         response.status(400);
         response.send("Invalid Todo Status");
-        break;
       }
-
+      break;
+    ///API 1 SENARIO 6
     case hasCategoryProperty(request.query):
       if (categoryArray.includes(category)) {
         getTodosQuery = `
@@ -207,13 +202,12 @@ app.get("/todos/", async (request, response) => {
         AND category = '${category}';`;
         data = await database.all(getTodosQuery);
         response.send(data);
-        break;
       } else {
         response.status(400);
         response.send("Invalid Todo Category");
-        break;
       }
-
+      break;
+    ///API 1 SENARIO 4
     default:
       getTodosQuery = `
       SELECT
@@ -226,7 +220,6 @@ app.get("/todos/", async (request, response) => {
       response.send(data);
   }
 });
-
 ///API 2
 app.get("/todos/:todoId/", async (request, response) => {
   const { todoId } = request.params;
@@ -311,9 +304,10 @@ app.post("/todos/", async (request, response) => {
   if (
     priorityArray.includes(priority) &&
     categoryArray.includes(category) &&
-    status.includes(status) &&
+    statusArray.includes(status) &&
     isDateValid
   ) {
+    ///Creating dateObj
     let month = parseInt(dueDate.split("-")[1]);
     let day = parseInt(dueDate.split("-")[2]);
     let year = dueDate.split("-")[0];
@@ -325,7 +319,6 @@ app.post("/todos/", async (request, response) => {
     }
 
     let createDateObj = format(new Date(year, month - 1, day), "yyyy-MM-dd");
-    console.log(createDateObj);
 
     const postTodoQuery = `
   INSERT INTO
@@ -335,15 +328,17 @@ app.post("/todos/", async (request, response) => {
     await database.run(postTodoQuery);
     response.send("Todo Successfully Added");
   } else {
+    ///Invalid status Response
     if (
       priorityArray.includes(priority) === true &&
-      categoryArray.includes(category) === true &&
       isDateValid === true &&
+      categoryArray.includes(category) === true &&
       statusArray.includes(status) === false
     ) {
       response.status(400);
       response.send("Invalid Todo Status");
     }
+    ///Invalid category Response
     if (
       priorityArray.includes(priority) === true &&
       isDateValid === true &&
@@ -353,6 +348,8 @@ app.post("/todos/", async (request, response) => {
       response.status(400);
       response.send("Invalid Todo Category");
     }
+
+    ///Invalid Priority Response
     if (
       priorityArray.includes(priority) === false &&
       isDateValid === true &&
@@ -362,6 +359,8 @@ app.post("/todos/", async (request, response) => {
       response.status(400);
       response.send("Invalid Todo Priority");
     }
+
+    ///Invalid dueDate Response
     if (
       priorityArray.includes(priority) === true &&
       isDateValid === false &&
@@ -612,7 +611,7 @@ app.put("/todos/:todoId/", async (request, response) => {
       }
   }
 });
-
+///API 6
 app.delete("/todos/:todoId/", async (request, response) => {
   const { todoId } = request.params;
   const deleteTodoQuery = `
