@@ -1,0 +1,13 @@
+GET http://localhost:3000/todos/?status=DONE
+###
+
+GET http://localhost:3000/todos/1/
+###
+
+
+GET http://localhost:3000/agenda/?date=2021-12-31
+###
+POST http://localhost:3000/todos/
+
+###
+PUT http://localhost:3000/todos/1/
